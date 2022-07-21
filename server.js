@@ -16,7 +16,16 @@ const configSQL = {
 const connection = mysql.createConnection(configSQL);
 
 function getProduct() {
-    let sql = "SELECT * FROM products"
+    return new Promise((resolve,reject)=>{
+        connection.query('select * from product',(err, data)=>{
+            if(err){
+                reject(err);
+            }
+            else {
+                resolve(data);
+            }
+        })
+    })
 }
 
 connection.connect((err)=>{
@@ -49,11 +58,25 @@ const server = http.createServer((req,res)=>{
             break;
         }
         case '/product':{
-            fs.readFile('views/products/list.html','utf-8',(err,data)=>{
+            fs.readFile('views/products/list.html','utf-8',async (err,data)=>{
                 if(err){
                     console.log(err);
                 }
                 else{
+                    let products = await getProduct();
+                    let tbody = '';
+                    products.map((product, index)=>{
+                        tbody += 
+                        `<tr>
+                            <td >${index + 1}</td>
+                            <td >${product.name}</td>
+                            <td >${product.price}</td>
+                            <td ><a href="/products/create/${product.id}" class = "btn btn-primary">Create</a></td>
+                            <td ><a href="/products/create/${product.id}" class = "btn btn-danger">Delete</a></td>
+                            
+                        </tr>`
+                    })
+                    data = data.replace('{products}', tbody)
                     res.writeHead(200, {'Content-type':'text/html'});
                     res.write(data);
                     res.end();
