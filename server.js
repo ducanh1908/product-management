@@ -62,6 +62,14 @@ const server = http.createServer((req,res)=>{
             });
             break;
         }
+        case '/product/create': {
+
+            break;
+        }
+        case '/product/edit': {
+
+            break;
+        }
 
         default :{
             fs.readFile('views/error-404.html','utf-8',(err,data)=>{
@@ -83,4 +91,4 @@ const server = http.createServer((req,res)=>{
 })
 server.listen(8080, ()=>{
     console.log('Server is running http://localhost:3000');
-})
+});
